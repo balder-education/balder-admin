@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://java.sun.com/jsf/core">
+<h:head>
+	<title>Balder Education - Administrator</title>
+	<style type="text/css">
+* {
+	margin: 0;
+	padding: 0;
+	font-family: Tahoma;
+	font-size: 9pt;
+}
+
+#divCenter {
+	width: 400px;
+	height: 150px;
+	left: 50%;
+	margin: -130px 0 0 -210px;
+	padding: 10px;
+	position: absolute;
+	top: 50%;
+}
+
+#centro {text-align:center;}
+
+</style>
+
+</h:head>
+<body>
+	<div id="divCenter">
+		<p:panel header="Identifique-se para utilizar o sistema">
+			<h:form id="formUsuario">
+				<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+				<p:panel header="Login de Usuário">
+					<p:panelGrid columns="3" style="border:0px;">
+
+						<p:outputLabel value="Usuário" />
+						<p:inputText id="user" size="35" required="true"
+							requiredMessage="Nome de usuario tem que ser preenchido"
+							value="#{loginBean.userName}" />
+						<p:message for="user" styleClass="error" />
+
+						<p:outputLabel value="Password" />
+						<p:password id="descSenha" value="#{loginBean.password}"
+							required="true" size="35"
+							validatorMessage="Senha está muito curta">
+							<f:validateLength minimum="8" />
+						</p:password>
+						<p:message for="descSenha" styleClass="error" />
+					</p:panelGrid>
+				</p:panel>
+				<br />
+				 <div id ="centro">
+				 	<p:commandButton value="Login" action="#{loginBean.login()}" ajax="true" update="formUsuario"/> 
+				 </div> 
+			</h:form>
+			<br />
+			<p:panel header="Esqueceu a senha?">
+			<h:form id="registration">
+				<div id ="centro">
+					<p:commandButton value="Registre-se" oncomplete="PF('registre').show();" process="@form" update="formRegUsuario" immediate="true" ajax="true" />
+					<p:commandButton value="Recuperar Senha" oncomplete="PF('recupera').show();" process="@form" update="formRecupera" immediate="true" ajax="true" />
+				</div>
+			</h:form>
+			</p:panel> 
+			<br />
+		</p:panel>
+	</div>
+	
+	<p:dialog header="Registre-se" widgetVar="registre" position="center" showEffect="explode">	
+	<h:form id="formRegUsuario">
+	    <p:messages id="mesRegistro" showDetail="true" autoUpdate="true" closable="true" for="mesRegistro" />
+			<p:panel header="Inclusão de novo usuário">
+				<p:panelGrid columns="3" style="border:0px;">
+
+					<p:outputLabel value="Nome de Usuário" />
+					<p:inputText id="user" size="45" required="true" requiredMessage="Nome de usuario tem que ser preenchido"
+						value="#{userBean.usuario.userName}" />
+					<p:message for="user" styleClass="error" />
+
+					<p:outputLabel value="Tipo de Usuário:" />
+					<p:selectOneMenu id="tpUsuario"
+						value="#{userBean.usuario.tipoUsuario}" required="true"
+						converter="#{genericEnumConverter}"
+						requiredMessage="Deve-se selecionar o tipo de Usuário"
+						validatorMessage="Tipo de Usuário inválido">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{listEnumeratorsBean.listTiposUsuarios}"
+							var="tipos" itemLabel="#{tipos.description}"
+							itemValue="#{tipos.value}" />
+					</p:selectOneMenu>
+					<p:message for="tpUsuario" styleClass="error" />
+
+					<p:outputLabel value="Password" />
+					<p:password id="descSenha" value="#{userBean.usuario.password}"
+						feedback="true" promptLabel="Intensidade da senha"
+						weakLabel="Senha fraca" goodLabel="Senha muito boa"
+						strongLabel="Senha forte" required="true"
+						validatorMessage="Senha está muito curta">
+						<f:validateLength minimum="8" />
+					</p:password>
+					<p:message for="descSenha" styleClass="error" />
+				</p:panelGrid>
+			</p:panel>
+
+			<p:commandButton value="Incluir"
+				action="#{userBean.salvar()}" ajax="true"
+				update="formRegUsuario" />
+			<p:commandButton value="Limpar"
+				action="#{userBean.limpar()}" immediate="true"
+				process="@this" update="formRegUsuario" />
+		</h:form>
+	</p:dialog>
+
+	<p:dialog header="Recuperar Senha" widgetVar="recupera" position="center" showEffect="explode">	
+	<h:form id="formRecupera">
+	    <p:messages id="mesRecupera" showDetail="true" autoUpdate="true" closable="true" for="mesRecupera" />
+			<p:panel header="Recuperação de usuário">
+				<p:panelGrid columns="3" style="border:0px;">
+
+					<p:outputLabel value="Nome de Usuário" />
+					<p:inputText id="user" size="45" required="true" requiredMessage="Nome de usuario tem que ser preenchido"
+						value="#{userBean.usuario.userName}" />
+					<p:message for="user" styleClass="error" />
+
+				</p:panelGrid>
+			</p:panel>
+
+			<p:commandButton value="Recuperar" ajax="true"
+				update="formRecupera" />
+			<p:commandButton value="Limpar"
+				action="#{userBean.limpar()}" immediate="true"
+				process="@this" update="formRecupera" />
+		</h:form>
+	</p:dialog>
+
+</body>
+</html>

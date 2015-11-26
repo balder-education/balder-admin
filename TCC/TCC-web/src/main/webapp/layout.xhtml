@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+	<title>Administrador - Balder Education</title>
+	<style>
+.ui-layout-container {
+	width: 1300px;
+	height: 680px;
+	border: none !important;
+}
+
+.ui-widget, .ui-widget .ui-widget {
+	font-size: 90% !important;
+}
+</style>
+</h:head>
+<h:body>
+	<p:layout
+		style="min-width:1300px;min-height:768px;margin:0 auto;border:0px;height:100%;">
+		<p:layoutUnit position="north" style="border:0px;bottom:0;">
+			<p:panel header="Seja muito bem vindo: #{userBean.usuarioLogado.userName} --> Administrador - Balder Education"  collapsed="false" style="text-align:right;border:0px;"/>
+		</p:layoutUnit>
+		<p:layoutUnit position="west" header="Menu de Opções"
+			style="text-align:center;border:0px;">
+			<h:form id="menuOpcoes">
+				<p:menu toggleable="true">
+					<p:submenu label="Localização" icon="ui-icon-refresh">
+						<p:menuitem value="Países" action="#{menuAdm.paises()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Estados" action="#{menuAdm.estados()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Cidades" action="#{menuAdm.cidades()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Ceps" action="#{menuAdm.ceps()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Endereços" action="#{menuAdm.enderecos()}"
+							icon="ui-icon-disk" />
+					</p:submenu>
+					<p:submenu label="Usuários" icon="ui-icon-refresh">
+						<p:menuitem value="Role" action="#{menuAdm.role()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Usuário" action="#{menuAdm.usuarios()}"
+							icon="ui-icon-disk" />
+					</p:submenu>
+					<p:submenu label="Pessoas" icon="ui-icon-refresh">
+						<p:menuitem value="Pessoa" action="#{menuAdm.pessoa()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Administrador"
+							action="#{menuAdm.administrador()}" icon="ui-icon-disk" />
+						<p:menuitem value="Estudante" action="#{menuAdm.estudante()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Professor" action="#{menuAdm.professor()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Contatos da Pessoa"
+							action="#{menuAdm.contatoPessoa()}" icon="ui-icon-disk" />
+						<p:menuitem value="Endereços da Pessoa"
+							action="#{menuAdm.enderecoPessoa()}" icon="ui-icon-disk" />
+						<p:menuitem value="Ocupação da Pessoa"
+							action="#{menuAdm.ocupacao()}" icon="ui-icon-disk" />
+					</p:submenu>
+					<p:submenu label="Conteúdos" icon="ui-icon-refresh">
+						<p:menuitem value="Curso" action="#{menuAdm.curso()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Conteúdos" action="#{menuAdm.conteudo()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Templates" action="#{menuAdm.templates()}"
+							icon="ui-icon-disk" />
+						<p:menuitem value="Files" action="#{menuAdm.arquivos()}"
+							icon="ui-icon-disk" />
+					</p:submenu>
+					<p:submenu label="Consultas" icon="ui-icon-refresh">
+						<p:menuitem value="Países" action="#{menuCons.csPaises()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Estados" action="#{menuCons.csEstados()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Cidades" action="#{menuCons.csCidades()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Ceps" action="#{menuCons.csCeps()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Endereços" action="#{menuCons.csEnderecos()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Curso" action="#{menuCons.csCurso()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Conteúdos" action="#{menuCons.csConteudo()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Templates" action="#{menuCons.csTemplates()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Files" action="#{menuCons.csArquivos()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Pessoa" action="#{menuCons.csPessoa()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Estudante" action="#{menuCons.csEstudante()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+						<p:menuitem value="Professor" action="#{menuCons.csProfessor()}"
+							icon="ui-icon-arrowrefresh-1-w" />
+					</p:submenu>
+					
+					
+					
+					
+					
+				</p:menu>
+			</h:form>
+		</p:layoutUnit>
+		<p:layoutUnit position="center" style="border:0px;">
+			<ui:insert name="content"></ui:insert>
+		</p:layoutUnit>
+	</p:layout>
+</h:body>
+</html>
