@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+	<h:form id="formPessoa">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Cadastro / Edição da Pessoa">
+			<p:panelGrid columns="3" style="border:0px;">
+				<p:outputLabel value="Codigo" />
+				<p:inputText id="userId" value="#{personBean.person.id}"
+					readonly="true" />
+				<br />
+
+				<p:outputLabel value="Nome" />
+				<p:inputText id="descricao" size="60"
+					value="#{personBean.person.name}" required="true"
+					requiredMessage="Nome da Pessoa é um campo requerido"
+					validatorMessage="Nome da Pessoa não deve conter mais de 75 caracteres">
+					<f:validateLength maximum="75" />
+				</p:inputText>
+				<p:message for="descricao" styleClass="error" />
+				
+				<p:outputLabel value="Data de Nascimento" />
+				<p:calendar id="dtNascimento" value="#{personBean.person.burnDate}"  showOn="button"
+				  validatorMessage="Data de nascimento no formato errado dd/MM/yyyy" pattern="dd/MM/yyyy"/>
+				<p:message for="dtNascimento" styleClass="error" />
+				
+				<p:outputLabel value="Identidade" />
+				<p:inputText id="rg" size="35"
+					value="#{personBean.person.rg}" required="true"
+					requiredMessage="Identidade da Pessoa é um campo requerido"/>
+				<p:message for="rg" styleClass="error" />
+				
+				<p:outputLabel value="CPF" />
+				<p:inputText id="cpf" size="35"
+					value="#{personBean.person.cpf}" required="true"
+					requiredMessage="CPF da Pessoa é um campo requerido"/>
+				<p:message for="cpf" styleClass="error" />
+
+				<p:outputLabel value="Email" />
+				<p:inputText id="email" size="60"
+					value="#{personBean.person.email}" required="true"
+					requiredMessage="Email da Pessoa é um campo requerido"
+					validatorMessage="Email da Pessoa não deve conter mais de 60 caracteres">
+					<f:validateLength maximum="60" />
+				</p:inputText>
+				<p:message for="email" styleClass="error" />
+  		    </p:panelGrid>
+			
+			<p:commandButton value="Incluir" action="#{personBean.salvar()}"
+				ajax="true" update="formPessoa,formListaPessoa" />
+			<p:commandButton value="Alterar" action="#{personBean.salvar()}"
+				ajax="true" update="formPessoa,formListaPessoa" />
+			<p:commandButton value="Limpar" action="#{personBean.limpar()}" 
+			   immediate="true" process="@this" update="formPessoa" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaPessoa">
+		<p:panel header="Listagem das Pessoas">
+			<p:dataTable var="personGrid" value="#{personBean.listpersons}" paginator="true" rows="5" 
+			id="table" selection="#{personBean.personSel}" rowKey="#{personGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código da Pessoa">
+					<h:outputText value="#{personGrid.id}" />
+				</p:column>
+				<p:column headerText="Nome da Pessoa">
+					<h:outputText value="#{personGrid.name}" />
+				</p:column>
+				<p:column headerText="Data de Nascimento">
+					<h:outputText value="#{personGrid.burnDate}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Identidade">
+					<h:outputText value="#{personGrid.rg}" />
+				</p:column>
+				<p:column headerText="CPF">
+					<h:outputText value="#{personGrid.cpf}" />
+				</p:column>
+				<p:column headerText="Email">
+					<h:outputText value="#{personGrid.email}" />
+				</p:column>
+				<p:column headerText="Editar" style="width:5%">
+				  <center><p:commandButton action="#{personBean.editar()}" icon="ui-icon-document-b" ajax="true" process="@form" update="formPessoa">
+						<f:setPropertyActionListener value="#{personGrid}" target="#{personBean.personSel}" />
+					</p:commandButton>
+				  </center> 
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{personGrid}" target="#{personBean.personSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão da Pessoa" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{personBean.excluir()}" ajax="true" update="formPessoa,formListaPessoa" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{personBean.limpar()}" ajax="true" update="formPessoa,formListaPessoa" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+
+</ui:define>
+
+</ui:composition>

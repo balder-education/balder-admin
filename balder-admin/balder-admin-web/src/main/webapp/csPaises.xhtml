@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+
+	<h:form id="formPais">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Consulta de País">
+			<p:panelGrid columns="3" style="border:0px;">
+				<p:outputLabel value="Codigo" />
+				<p:inputText id="userId" value="#{countryBean.pais.id}" validatorMessage="O valor para codigo tem que ser maior que zero">
+					<f:validateLongRange minimum="0"/>
+				</p:inputText>
+				<p:message for="userId" styleClass="error" />				
+
+				<p:outputLabel value="Nome" />
+				<p:inputText id="descricao" size="60" value="#{countryBean.pais.name}" validatorMessage="Nome do País não deve conter mais de 60 caracteres">
+					<f:validateLength maximum="60" />
+				</p:inputText>
+				<p:message for="descricao" styleClass="error" />
+				
+				<p:outputLabel value="Descrição" />
+				<p:inputText id="descricaoCp" size="75" value="#{countryBean.pais.description}"/>
+				<p:message for="descricaoCp" styleClass="error" />
+  		    </p:panelGrid>
+			
+			<p:commandButton value="Buscar" action="#{countryBean.buscar()}"
+				ajax="true" update="formPais,formListaPais" />
+			<p:commandButton value="Limpar" action="#{countryBean.limpar()}" 
+			   immediate="true" process="@this" update="formPais,formListaPais" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaPais">
+		<p:panel header="Listagem dos Países">
+			<p:dataTable var="paisGrid" value="#{countryBean.listPais}" paginator="true" rows="5" 
+			id="table" selection="#{countryBean.paisSel}" rowKey="#{paisGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código do País" filterBy="#{paisGrid.id}" filterMatchMode="contains">
+					<h:outputText value="#{paisGrid.id}" />
+				</p:column>
+				<p:column headerText="Nome do País" filterBy="#{paisGrid.name}" filterMatchMode="contains">
+					<h:outputText value="#{paisGrid.name}" />
+				</p:column>
+				<p:column headerText="Descrição do País" filterBy="#{paisGrid.description}" filterMatchMode="contains">
+					<h:outputText value="#{paisGrid.description}" />
+				</p:column>
+				<p:column headerText="Estados" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheEstados').show();" process="@form" update=":formEstados">
+						<f:setPropertyActionListener value="#{paisGrid}" target="#{countryBean.paisSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{paisGrid}" target="#{countryBean.paisSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão do País" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{countryBean.excluir()}" ajax="true" update="formPais,formListaPais" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{countryBean.limpar()}" ajax="true" update="formPais,formListaPais" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+	
+	<p:dialog header="Visualizar Estados" widgetVar="detalheEstados" position="center" showEffect="explode" width="600">
+	<h:form id="formEstados">
+		<p:dataTable var="estado" value="#{countryBean.paisSel.listStates}" emptyMessage="Sem registros para serem apresentados"
+			paginator="true" rows="5" id="table" rowKey="#{estado.id}">
+			<p:column headerText="Código do Estado">
+				<h:outputText value="#{estado.id}" />
+			</p:column>
+			<p:column headerText="Nome do Estado">
+				<h:outputText value="#{estado.name}" />
+			</p:column>
+			<p:column headerText="Descrição do Estado">
+				<h:outputText value="#{estado.description}" />
+			</p:column>
+		</p:dataTable>
+    </h:form>
+	</p:dialog>
+
+
+</ui:define>
+
+</ui:composition>

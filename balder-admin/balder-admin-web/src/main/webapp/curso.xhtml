@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+
+	<h:form id="formCurso">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Cadastro / Edição do Curso">
+			<p:panelGrid columns="3" style="border:0px;">
+				<p:outputLabel value="Codigo" />
+				<p:inputText id="userId" value="#{courseBean.curso.id}"
+					readonly="true" />
+				<br />
+				
+				<p:outputLabel value="Professor/Tutor:"/>
+				<p:selectOneMenu id="idProfessor" value="#{courseBean.curso.teacher}" required="true" 
+					converter="#{genericConverter}" requiredMessage="Deve-se selecionar o professor">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{teacherBean.listprofessors}" var="mark" 
+							itemLabel="#{mark.name}"/>
+				</p:selectOneMenu>
+				<p:message for="idProfessor" styleClass="error" />
+
+				<p:outputLabel value="Descrição do Curso" />
+				<p:inputTextarea id="descricao" rows="20" cols="75" 
+					value="#{courseBean.curso.description}" required="true"
+					requiredMessage="Descrição referente ao Curso é um campo requerido"/>
+				<p:message for="descricao" styleClass="error" />
+
+				<p:outputLabel value="Data de Inicio" />
+				<p:calendar id="dtInicio" value="#{courseBean.curso.initialDate}"  showOn="button" required="true"
+				  requiredMessage="Data de inicio do curso deve ser selecionada"
+				  validatorMessage="Data de inicio do curso deve estar no formato dd/MM/yyyy" pattern="dd/MM/yyyy"/>
+				<p:message for="dtInicio" styleClass="error" />
+				
+				<p:outputLabel value="Data Final" />
+				<p:calendar id="dtFim" value="#{courseBean.curso.endDate}"  showOn="button" required="true"
+				  requiredMessage="Data de finalização do curso deve ser selecionada"
+				  validatorMessage="Data de finalização do curso deve estar no formato dd/MM/yyyy" pattern="dd/MM/yyyy"/>
+				<p:message for="dtFim" styleClass="error" />
+
+  		    </p:panelGrid>
+			
+			<p:commandButton value="Incluir" action="#{courseBean.salvar()}"
+				ajax="true" update="formCurso,formListaCursos" />
+			<p:commandButton value="Alterar" action="#{courseBean.salvar()}"
+				ajax="true" update="formCurso,formListaCursos" />
+			<p:commandButton value="Limpar" action="#{courseBean.limpar()}" 
+			   immediate="true" process="@this" update="formCurso" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaCursos">
+		<p:panel header="Listagem dos Cursos">
+			<p:dataTable var="cursoGrid" value="#{courseBean.listCursos}" paginator="true" rows="5" 
+			id="table" selection="#{cityBean.cidadeSel}" rowKey="#{cursoGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código da Curso">
+					<h:outputText value="#{cursoGrid.id}" />
+				</p:column>
+				<p:column headerText="Descrição do Curso">
+					<h:outputText value="#{cursoGrid.description}" />
+				</p:column>
+				<p:column headerText="Data Inicial">
+					<h:outputText value="#{cursoGrid.initialDate}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Data Final">
+					<h:outputText value="#{cursoGrid.endDate}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Professor">
+					<h:outputText value="#{cursoGrid.teacher.name}" />
+				</p:column>
+				<p:column headerText="Qtd.Alunos">
+					<h:outputText value="#{cursoGrid.listStudent.size()}" />
+				</p:column>
+				<p:column headerText="Conteúdos relacionados">
+					<h:outputText value="#{cursoGrid.listContents.size()}" />
+				</p:column>
+				<p:column headerText="Editar" style="width:5%">
+				  <center><p:commandButton action="#{courseBean.editar()}" icon="ui-icon-document-b" ajax="true" process="@form" update="formCurso">
+						<f:setPropertyActionListener value="#{cursoGrid}" target="#{courseBean.cursoSel}" />
+					</p:commandButton>
+				  </center> 
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{cursoGrid}" target="#{courseBean.cursoSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão do Curso" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{courseBean.excluir()}" ajax="true" update="formCurso,formListaCursos" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{courseBean.limpar()}" ajax="true" update="formCurso,formListaCursos" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+
+</ui:define>
+
+</ui:composition>

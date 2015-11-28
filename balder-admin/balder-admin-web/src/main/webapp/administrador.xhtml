@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+	<h:form id="formAdministrador">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Cadastro / Edição do Administrador">
+			<p:panel header="Dados Basicos">
+			<p:panelGrid columns="3" style="border:0px;">
+					<p:outputLabel value="Codigo" />
+					<p:inputText id="userId" value="#{administratorBean.administrator.id}"
+						readonly="true" />
+					<br />
+	
+					<p:outputLabel value="Nome" />
+					<p:inputText id="descricao" size="60"
+						value="#{administratorBean.administrator.name}" required="true"
+						requiredMessage="Nome do Administrador é um campo requerido"
+						validatorMessage="Nome do Administrador não deve conter mais de 75 caracteres">
+						<f:validateLength maximum="75" />
+					</p:inputText>
+					<p:message for="descricao" styleClass="error" />
+					
+					<p:outputLabel value="Data de Nascimento" />
+					<p:calendar id="dtNascimento" value="#{administratorBean.administrator.burnDate}"  showOn="button"
+					  validatorMessage="Data de nascimento no formato errado dd/MM/yyyy" pattern="dd/MM/yyyy"/>
+					<p:message for="dtNascimento" styleClass="error" />
+					
+					<p:outputLabel value="Identidade" />
+					<p:inputText id="rg" size="35"
+						value="#{administratorBean.administrator.rg}" required="true"
+						requiredMessage="Identidade do Administrador é um campo requerido"/>
+					<p:message for="rg" styleClass="error" />
+					
+					<p:outputLabel value="CPF" />
+					<p:inputText id="cpf" size="35"
+						value="#{administratorBean.administrator.cpf}" required="true"
+						requiredMessage="CPF da Administrador é um campo requerido"/>
+					<p:message for="cpf" styleClass="error" />
+	
+					<p:outputLabel value="Email" />
+					<p:inputText id="email" size="60"
+						value="#{administratorBean.administrator.email}" required="true"
+						requiredMessage="Email da Administrador é um campo requerido"
+						validatorMessage="Email da Administrador não deve conter mais de 120 caracteres">
+						<f:validateLength maximum="120" />
+					</p:inputText>
+					<p:message for="email" styleClass="error" />
+  		    </p:panelGrid>
+			</p:panel>
+			<p:panel header="Usuário">
+				<p:panelGrid columns="3" style="border:0px;">
+					<p:outputLabel value="Nome de Usuário" />
+					<p:inputText id="user" size="75"
+						value="#{administratorBean.administrator.user.userName}"/>
+					<p:message for="user" styleClass="error" />
+
+					<p:outputLabel value="Perfil:" />
+					<p:selectOneMenu id="idPerfil" value="#{administratorBean.administrator.user.role}"
+						required="true" converter="#{genericConverter}"
+						requiredMessage="Deve-se selecionar o perfil">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{roleBean.listperfils}" var="mark"
+							itemLabel="#{mark.rolename}" />
+					</p:selectOneMenu>
+					<p:message for="idPerfil" styleClass="error" />
+
+					<p:outputLabel value="Tipo de Usuário:"/>
+					<p:selectOneMenu id="tpUsuario" value="#{administratorBean.administrator.user.tipoUsuario}" required="true" 
+						converter="#{genericEnumConverter}" requiredMessage="Deve-se selecionar o tipo de Usuário"
+						validatorMessage="Tipo de Usuário inválido">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{listEnumeratorsBean.listTiposUsuarios}" var="tipos" 
+								itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+					</p:selectOneMenu>
+					<p:message for="tpUsuario" styleClass="error" />
+
+					<p:outputLabel value="Password" />
+					<p:password id="descSenha" value="#{administratorBean.administrator.user.password}" feedback="true"
+	                    promptLabel="Intensidade da senha" weakLabel="Senha fraca"
+	                    goodLabel="Senha muito boa" strongLabel="Senha forte" required="true"
+	                    validatorMessage="Senha está muito curta">
+						<f:validateLength minimum="8" />
+					</p:password>
+					<p:message for="descSenha" styleClass="error" />
+				</p:panelGrid>		
+			</p:panel>
+			
+			<p:commandButton value="Incluir" action="#{administratorBean.salvar()}"
+				ajax="true" update="formAdministrador,formListaAdministrador" />
+			<p:commandButton value="Alterar" action="#{administratorBean.salvar()}"
+				ajax="true" update="formAdministrador,formListaAdministrador" />
+			<p:commandButton value="Limpar" action="#{administratorBean.limpar()}" 
+			   immediate="true" process="@this" update="formAdministrador" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaAdministrador">
+		<p:panel header="Listagem dos Administradores">
+			<p:dataTable var="administradorGrid" value="#{administratorBean.listadministrators}" paginator="true" rows="5" 
+			id="table" selection="#{administratorBean.administratorSel}" rowKey="#{administradorGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código do Administrador">
+					<h:outputText value="#{administradorGrid.id}" />
+				</p:column>
+				<p:column headerText="Nome do Administrador">
+					<h:outputText value="#{administradorGrid.name}" />
+				</p:column>
+				<p:column headerText="Email">
+					<h:outputText value="#{administradorGrid.email}" />
+				</p:column>
+				<p:column headerText="Usuário">
+					<h:outputText value="#{administradorGrid.user.userName}" />
+				</p:column>
+				<p:column headerText="Tipo de Usuário">
+					<h:outputText value="#{administradorGrid.user.tipoUsuario.descricao}" />
+				</p:column>
+				<p:column headerText="Editar" style="width:5%">
+				  <center><p:commandButton action="#{administratorBean.editar()}" icon="ui-icon-document-b" ajax="true" process="@form" update="formAdministrador">
+						<f:setPropertyActionListener value="#{administradorGrid}" target="#{administratorBean.administratorSel}" />
+					</p:commandButton>
+				  </center> 
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{administradorGrid}" target="#{administratorBean.administratorSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão do Administrador" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{administratorBean.excluir()}" ajax="true" update="formAdministrador,formListaAdministrador" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{administratorBean.limpar()}" ajax="true" update="formAdministrador,formListaAdministrador" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+
+</ui:define>
+
+</ui:composition>

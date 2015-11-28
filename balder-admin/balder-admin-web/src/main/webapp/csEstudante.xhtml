@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+	<h:form id="formEstudante">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Consulta de Estudante">
+			<p:panelGrid columns="3" style="border:0px;">
+					<p:outputLabel value="Codigo" />
+					<p:inputText id="userId" value="#{studentBean.student.id}"
+						validatorMessage="O valor para codigo tem que ser maior que zero">
+						<f:validateLongRange minimum="0" />
+					</p:inputText>
+					<p:message for="userId" styleClass="error" />
+	
+					<p:outputLabel value="Nome" />
+					<p:inputText id="descricao" size="75" value="#{studentBean.student.name}" 
+						validatorMessage="Nome do Estudante não deve conter mais de 75 caracteres">
+						<f:validateLength maximum="75" />
+					</p:inputText>
+					<p:message for="descricao" styleClass="error" />
+					
+					<p:outputLabel value="Data de Nascimento" />
+					<p:calendar id="dtNascimento" value="#{studentBean.student.burnDate}"  showOn="button"
+					  validatorMessage="Data de nascimento no formato errado dd/MM/yyyy" pattern="dd/MM/yyyy"/>
+					<p:message for="dtNascimento" styleClass="error" />
+					
+					<p:outputLabel value="Identidade" />
+					<p:inputText id="rg" size="35" value="#{studentBean.student.rg}"/>
+					<p:message for="rg" styleClass="error" />
+					
+					<p:outputLabel value="CPF" />
+					<p:inputText id="cpf" size="35" value="#{studentBean.student.cpf}"/>
+					<p:message for="cpf" styleClass="error" />
+	
+					<p:outputLabel value="Email" />
+					<p:inputText id="email" size="60" value="#{studentBean.student.email}" 
+						validatorMessage="Email do Estudante não deve conter mais de 120 caracteres">
+						<f:validateLength maximum="120" />
+					</p:inputText>
+					<p:message for="email" styleClass="error" />
+  		    </p:panelGrid>
+
+			<p:commandButton value="Buscar" action="#{studentBean.buscar()}"
+				ajax="true" update="formEstudante,formListaEstudante" />
+			<p:commandButton value="Limpar" action="#{studentBean.limpar()}" 
+			   immediate="true" process="@this" update="formEstudante,formListaEstudante" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaEstudante">
+		<p:panel header="Listagem dos Estudantes">
+			<p:dataTable var="estudanteGrid" value="#{studentBean.listestudantes}" paginator="true" rows="5" 
+			id="table" selection="#{studentBean.studentSel}" rowKey="#{estudanteGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código do Estudante" filterBy="#{estudanteGrid.id}" filterMatchMode="contains">
+					<h:outputText value="#{estudanteGrid.id}" />
+				</p:column>
+				<p:column headerText="Nome da Pessoa" filterBy="#{estudanteGrid.name}" filterMatchMode="contains">
+					<h:outputText value="#{estudanteGrid.name}" />
+				</p:column>
+				<p:column headerText="Data de Nascimento">
+					<h:outputText value="#{estudanteGrid.burnDate}">
+					<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				<p:column headerText="Identidade" filterBy="#{estudanteGrid.rg}" filterMatchMode="contains">
+					<h:outputText value="#{estudanteGrid.rg}" />
+				</p:column>
+				<p:column headerText="CPF" filterBy="#{estudanteGrid.cpf}" filterMatchMode="contains">
+					<h:outputText value="#{estudanteGrid.cpf}" />
+				</p:column>
+				<p:column headerText="Email" filterBy="#{estudanteGrid.email}" filterMatchMode="contains">
+					<h:outputText value="#{estudanteGrid.email}" />
+				</p:column>
+				<p:column headerText="Endereços" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheEnderecos').show();" process="@form" update=":formEnderecos">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Contatos" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheContatos').show();" process="@form" update=":formContatos">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Ocupações" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheOcupacoes').show();" process="@form" update=":formOcupacoes">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Usuário" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheUsuario').show();" process="@form" update=":formUsuario">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Detalhes Estudante" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheEstudante').show();" process="@form" update=":formDetEstudante">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{estudanteGrid}" target="#{studentBean.studentSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão do Estudante" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{studentBean.excluir()}" ajax="true" update="formEstudante,formListaEstudante" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{studentBean.limpar()}" ajax="true" update="formEstudante,formListaEstudante" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+	
+	<p:dialog header="Visualizar Endereços" widgetVar="detalheEnderecos" position="center" showEffect="explode" width="600">
+	<h:form id="formEnderecos">
+		<p:dataTable var="endereco" value="#{studentBean.studentSel.listaEnderecos}" emptyMessage="Sem registros para serem apresentados"
+			paginator="true" rows="5" id="table" rowKey="#{endereco.id}" widgetVar="enderecosTable">
+			<p:column headerText="Código do Endereço" filterBy="#{endereco.id}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.id}" />
+			</p:column>
+			<p:column headerText="Tipo de Endereço" filterBy="#{endereco.tipoEndereco}" filterMatchMode="contains">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('enderecosTable').filter()" converter="#{genericEnumConverter}">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{listEnumeratorsBean.listTiposEnderecos}" var="tipos" 
+								itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+					</p:selectOneMenu>
+               	</f:facet>
+				<h:outputText value="#{endereco.tipoEndereco.descricao}" />
+			</p:column>			
+			<p:column headerText="Numero do Cep" filterBy="#{endereco.address.cep.zipCode}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.address.cep.zipCode}" />
+			</p:column>
+			<p:column headerText="Nome da Rua" filterBy="#{endereco.address.cep.street}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.address.cep.street}" />
+			</p:column>
+			<p:column headerText="Nome da Cidade" filterBy="#{endereco.address.cep.city}" filterMatchMode="contains">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('enderecosTable').filter()" converter="#{genericConverter}">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{cityBean.listCidades}" var="mark" itemLabel="#{mark.name}" />
+					</p:selectOneMenu>
+               	</f:facet>
+				<h:outputText value="#{endereco.address.cep.city.name}" />
+			</p:column>
+			<p:column headerText="Nome do Estado" filterBy="#{endereco.address.cep.city.state}" filterMatchMode="contains">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('enderecosTable').filter()" converter="#{genericConverter}">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{stateBean.listEstado}" var="mark" itemLabel="#{mark.name}" />
+					</p:selectOneMenu>
+               	</f:facet>
+				<h:outputText value="#{endereco.address.cep.city.state.name}" />
+			</p:column>
+			<p:column headerText="Nome do País" filterBy="#{endereco.address.cep.city.state.country}" filterMatchMode="contains">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('enderecosTable').filter()" converter="#{genericConverter}">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{countryBean.listPais}" var="mark" itemLabel="#{mark.name}" />
+					</p:selectOneMenu>
+               	</f:facet>
+				<h:outputText value="#{endereco.address.cep.city.state.country.name}" />
+			</p:column>
+			<p:column headerText="Número do Endereço" filterBy="#{endereco.address.number}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.address.number}" />
+			</p:column>
+			<p:column headerText="Complemento" filterBy="#{endereco.address.complement}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.address.complement}" />
+			</p:column>
+			<p:column headerText="Referencia" filterBy="#{endereco.address.referencia}" filterMatchMode="contains">
+				<h:outputText value="#{endereco.address.referencia}" />
+			</p:column>
+		</p:dataTable>
+    </h:form>
+	</p:dialog>
+	
+	<p:dialog header="Visualizar Contatos" widgetVar="detalheContatos" position="center" showEffect="explode" width="600">
+	<h:form id="formContatos">
+		<p:dataTable var="contato" value="#{studentBean.studentSel.listaContatos}" emptyMessage="Sem registros para serem apresentados"
+			paginator="true" rows="5" id="table" rowKey="#{contato.id}" widgetVar="contatosTable">
+			<p:column headerText="Código do Contato" filterBy="#{contato.id}" filterMatchMode="contains">
+				<h:outputText value="#{contato.id}" />
+			</p:column>
+			<p:column headerText="Descrição do contato" filterBy="#{contato.description}" filterMatchMode="contains">
+				<h:outputText value="#{contato.description}" />
+			</p:column>
+			<p:column headerText="Tipo de Contato" filterBy="#{contato.tipoContato}" filterMatchMode="contains">
+				<f:facet name="filter">
+					<p:selectOneMenu onchange="PF('contatosTable').filter()" converter="#{genericEnumConverter}">
+							<f:selectItem itemLabel="Selecionar" itemValue="" />
+							<f:selectItems value="#{listEnumeratorsBean.listTiposContatos}" var="tipos" 
+								itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+					</p:selectOneMenu>
+               	</f:facet>
+				<h:outputText value="#{contato.tipoContato.descricao}" />
+			</p:column>
+		</p:dataTable>
+    </h:form>
+	</p:dialog>
+
+	<p:dialog header="Visualizar Ocupações" widgetVar="detalheOcupacoes" position="center" showEffect="explode" width="600">
+	<h:form id="formOcupacoes">
+		<p:dataTable var="ocupacao" value="#{studentBean.studentSel.listaOcupacao}" emptyMessage="Sem registros para serem apresentados"
+			paginator="true" rows="5" id="table" rowKey="#{ocupacao.id}">
+			<p:column headerText="Código da Ocupação" filterBy="#{ocupacao.id}" filterMatchMode="contains">
+				<h:outputText value="#{ocupacao.id}" />
+			</p:column>
+			<p:column headerText="Descrição da ocupação" filterBy="#{ocupacao.description}" filterMatchMode="contains">
+				<h:outputText value="#{ocupacao.description}" />
+			</p:column>
+		</p:dataTable>
+    </h:form>
+	</p:dialog>
+	
+	<p:dialog header="Visualizar Usuário" widgetVar="detalheUsuario" position="center" showEffect="explode" width="400">
+	<h:form id="formUsuario">
+		<p:panelGrid columns="2" style="border:0px;">
+			<p:outputLabel value="Nome de Usuário" />
+			<h:outputText value="#{studentBean.studentSel.user.userName}" />
+
+			<p:outputLabel value="Tipo de Usuário" />
+			<h:outputText value="#{studentBean.studentSel.user.tipoUsuario.descricao}" />
+		
+			<p:outputLabel value="Perfil de Usuário" />
+			<h:outputText value="#{studentBean.studentSel.user.role.acronym}" />
+		</p:panelGrid>
+    </h:form>
+	</p:dialog>
+
+	<p:dialog header="Detalhes do Estudante" widgetVar="detalheEstudante" position="center" showEffect="explode" width="400">
+	<h:form id="formDetEstudante">
+		<p:panelGrid columns="2" style="border:0px;">
+			<p:outputLabel value="Nivel do Estudante" />
+			<h:outputText value="#{studentBean.studentSel.tipoLevelStudent.descricao}" />
+
+			<p:outputLabel value="Histórico" />
+			<h:outputText value="#{studentBean.studentSel.history.texto}" />
+		</p:panelGrid>
+    </h:form>
+	</p:dialog>
+
+
+</ui:define>
+
+</ui:composition>

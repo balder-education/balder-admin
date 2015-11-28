@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+
+	<h:form id="formConteudo">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Consulta de Conteúdos">
+			<p:panelGrid columns="3" style="border:0px;">
+				<p:outputLabel value="Codigo" />
+				<p:inputText id="userId" value="#{contentBean.conteudo.id}"
+					validatorMessage="O valor para codigo tem que ser maior que zero">
+					<f:validateLongRange minimum="0" />
+				</p:inputText>
+				<p:message for="userId" styleClass="error" />
+				
+				<p:outputLabel value="Descrição" />
+				<p:inputText id="descricao" size="60"
+					value="#{contentBean.conteudo.description}" validatorMessage="Descrição do Conteúdo não deve conter mais de 60 caracteres">
+					<f:validateLength maximum="60" />
+				</p:inputText>
+				<p:message for="descricao" styleClass="error" />
+
+				<p:outputLabel value="Referente ao Curso:"/>
+				<p:selectOneMenu id="idCurso" value="#{contentBean.conteudo.curso}" 
+					converter="#{genericConverter}" validatorMessage="Tipo de Curso inválido">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{courseBean.listCursos}" var="mark" 
+							itemLabel="#{mark.description}" itemValue="#{mark}" />
+				</p:selectOneMenu>
+				<p:message for="idCurso" styleClass="error" />
+
+				<p:outputLabel value="Tipo de Conteúdo:"/>
+				<p:selectOneMenu id="tpConteudo" value="#{contentBean.conteudo.tipoConteudo}"  
+					converter="#{tipoConteudoConverter}" validatorMessage="Tipo de Conteúdo inválido">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{listEnumeratorsBean.listTiposConteudos}" var="tipos" 
+							itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+				</p:selectOneMenu>
+				<p:message for="tpConteudo" styleClass="error" />
+
+				<p:outputLabel value="Tipo Level Conteudo:"/>
+				<p:selectOneMenu id="tpLevel" value="#{contentBean.conteudo.tipoLevel}"  
+					converter="#{tipoLevelContentConverter}" validatorMessage="Tipo de Level referente ao conteúdo inválido">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{listEnumeratorsBean.listTiposLevelsContent}" var="tipos" 
+							itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+				</p:selectOneMenu>
+				<p:message for="tpLevel" styleClass="error" />
+				
+  		    </p:panelGrid>
+			
+			<p:commandButton value="Buscar" action="#{contentBean.buscar()}"
+				ajax="true" update="formConteudo,formListaConteudo" />
+			<p:commandButton value="Limpar" action="#{contentBean.limpar()}" 
+			   immediate="true" process="@this" update="formConteudo,formListaConteudo" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaConteudo">
+		<p:panel header="Listagem dos Conteúdos">
+			<p:dataTable var="conteudoGrid" value="#{contentBean.listConteudo}" paginator="true" rows="5" widgetVar="conteudosTable"
+			id="table" selection="#{contentBean.conteudoSel}" rowKey="#{conteudoGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código da Conteúdo" filterBy="#{conteudoGrid.id}" filterMatchMode="contains">
+					<h:outputText value="#{conteudoGrid.id}" />
+				</p:column>
+				<p:column headerText="Descrição" filterBy="#{conteudoGrid.description}" filterMatchMode="contains">
+					<h:outputText value="#{conteudoGrid.description}" />
+				</p:column>
+				<p:column headerText="Tipo de Conteúdo" filterBy="#{conteudoGrid.tipoConteudo}" filterMatchMode="contains">
+					<f:facet name="filter">
+						<p:selectOneMenu onchange="PF('conteudosTable').filter()" converter="#{genericEnumConverter}">
+								<f:selectItem itemLabel="Selecionar" itemValue="" />
+								<f:selectItems value="#{listEnumeratorsBean.listTiposConteudos}" var="tipos" 
+									itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+						</p:selectOneMenu>
+                	</f:facet>
+					<h:outputText value="#{conteudoGrid.tipoConteudo.descricao}" />
+				</p:column>
+				<p:column headerText="Level do Conteúdo" filterBy="#{conteudoGrid.tipoLevel}" filterMatchMode="contains">
+					<f:facet name="filter">
+						<p:selectOneMenu onchange="PF('conteudosTable').filter()" converter="#{genericEnumConverter}">
+								<f:selectItem itemLabel="Selecionar" itemValue="" />
+								<f:selectItems value="#{listEnumeratorsBean.listTiposLevelsContent}" var="tipos" 
+									itemLabel="#{tipos.description}" itemValue="#{tipos.value}" />
+						</p:selectOneMenu>
+                	</f:facet>
+					<h:outputText value="#{conteudoGrid.tipoLevel.descricao}" />
+				</p:column>
+				<p:column headerText="Referente ao Curso" filterBy="#{conteudoGrid.curso.description}" filterMatchMode="contains">
+					<h:outputText value="#{conteudoGrid.curso.description}" />
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{conteudoGrid}" target="#{contentBean.conteudoSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão do Conteúdo" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{contentBean.excluir()}" ajax="true" update="formConteudo,formListaConteudo" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{contentBean.limpar()}" ajax="true" update="formConteudo,formListaConteudo" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+
+</ui:define>
+
+</ui:composition>

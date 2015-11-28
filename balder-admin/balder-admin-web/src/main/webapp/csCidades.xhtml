@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:f="http://java.sun.com/jsf/core"
+    template="layout.xhtml">
+    
+<ui:define name="content">
+
+	<h:form id="formCidade">
+		<p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+		<p:panel header="Consulta de Cidades">
+			<p:panelGrid columns="3" style="border:0px;">
+				<p:outputLabel value="Codigo" />
+				<p:inputText id="userId" value="#{cityBean.cidade.id}" validatorMessage="O valor para o codigo tem que ser maior que zero">
+					<f:validateLongRange minimum="0"/>
+				</p:inputText>
+				<p:message for="userId" styleClass="error" />				
+				
+				<p:outputLabel value="Estado:"/>
+				<p:selectOneMenu id="idEstado" value="#{cityBean.cidade.state}" converter="#{genericConverter}">
+						<f:selectItem itemLabel="Selecionar" itemValue="" />
+						<f:selectItems value="#{stateBean.listEstado}" var="mark" 
+							itemLabel="#{mark.name}"/>
+				</p:selectOneMenu>
+				<p:message for="idEstado" styleClass="error" />
+
+				<p:outputLabel value="Nome" />
+				<p:inputText id="descricao" size="60"
+					value="#{cityBean.cidade.name}" validatorMessage="Nome da Cidade não deve conter mais de 60 caracteres">
+					<f:validateLength maximum="60" />
+				</p:inputText>
+				<p:message for="descricao" styleClass="error" />
+				
+  		    </p:panelGrid>
+			
+			<p:commandButton value="Buscar" action="#{cityBean.buscar()}"
+				ajax="true" update="formCidade,formListaCidade" />
+			<p:commandButton value="Limpar" action="#{cityBean.limpar()}" 
+			   immediate="true" process="@this" update="formCidade,formListaCidade" />
+		</p:panel>
+	</h:form>
+
+	<h:form id="formListaCidade">
+		<p:panel header="Listagem das Cidades">
+			<p:dataTable var="cidadeGrid" value="#{cityBean.listCidades}" paginator="true" rows="5" widgetVar="cidadesTable"
+			id="table" selection="#{cityBean.cidadeSel}" rowKey="#{cidadeGrid.id}" emptyMessage="Sem registros para serem demonstrados">
+				<p:column headerText="Código da Cidade" filterBy="#{cidadeGrid.id}" filterMatchMode="contains">
+					<h:outputText value="#{cidadeGrid.id}" />
+				</p:column>
+				<p:column headerText="Nome da Cidade" filterBy="#{cidadeGrid.name}" filterMatchMode="contains">
+					<h:outputText value="#{cidadeGrid.name}" />
+				</p:column>
+				<p:column headerText="Estado da Cidade" filterBy="#{cidadeGrid.state}" filterMatchMode="contains">
+					<f:facet name="filter">
+						<p:selectOneMenu onchange="PF('cidadesTable').filter()" converter="#{genericConverter}">
+								<f:selectItem itemLabel="Selecionar" itemValue="" />
+								<f:selectItems value="#{stateBean.listEstado}" var="mark" itemLabel="#{mark.name}"/>
+						</p:selectOneMenu>
+                	</f:facet>
+					<h:outputText value="#{cidadeGrid.state.name}" />
+				</p:column>
+				<p:column headerText="Ceps" style="width:10%">
+				<center>
+					<p:commandButton value="View" icon="ui-icon-document-b" oncomplete="PF('detalheCeps').show();" process="@form" update=":formCeps">
+						<f:setPropertyActionListener value="#{cidadeGrid}" target="#{cityBean.cidadeSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+				<p:column headerText="Excluir" style="width:8%">
+				<center>
+					<p:commandButton value="Excluir" oncomplete="PF('detalheDialog').show();" process="@form" update="formRemover">
+						<f:setPropertyActionListener value="#{cidadeGrid}" target="#{cityBean.cidadeSel}" />
+					</p:commandButton>
+				</center>
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+	
+	<p:dialog header="Exclusão da Cidade" widgetVar="detalheDialog" position="center" showEffect="explode">
+	<h:form id="formRemover">
+		<p:panel header="Confirma a remoção?">
+		<center>
+			<p:commandButton value="Sim" action="#{cityBean.excluir()}" ajax="true" update="formCidade,formListaCidade" oncomplete="PF('detalheDialog').hide()" />
+			<p:commandButton value="Não" action="#{cityBean.limpar()}" ajax="true" update="formCidade,formListaCidade" oncomplete="PF('detalheDialog').hide()" />
+		</center>
+		</p:panel>    
+      </h:form>
+	</p:dialog>
+	
+	<p:dialog header="Visualizar Ceps" widgetVar="detalheCeps" position="center" showEffect="explode" width="600">
+	<h:form id="formCeps">
+		<p:dataTable var="cep" value="#{cityBean.cidadeSel.listCeps}" emptyMessage="Sem registros para serem apresentados"
+			paginator="true" rows="5" id="table" rowKey="#{cep.id}">
+			<p:column headerText="Código do Cep" filterBy="#{cep.id}" filterMatchMode="contains">
+				<h:outputText value="#{cep.id}" />
+			</p:column>
+			<p:column headerText="Nome da Rua" filterBy="#{cep.street}" filterMatchMode="contains">
+				<h:outputText value="#{cep.street}" />
+			</p:column>
+			<p:column headerText="Numero do Cep" filterBy="#{cep.zipCode}" filterMatchMode="contains">
+				<h:outputText value="#{cep.zipCode}" />
+			</p:column>
+		</p:dataTable>
+    </h:form>
+	</p:dialog>
+
+
+</ui:define>
+
+</ui:composition>
